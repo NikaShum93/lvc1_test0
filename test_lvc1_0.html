@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER-TEST: COZY LO-FI EDITION</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&family=Share+Tech+Mono&display=swap');
+
+        :root {
+            --neon-cyan: #80deea;
+            --neon-pink: #ffb6c1;
+            --neon-purple: #b39ddb;
+            --neon-yellow: #fff59d;
+            --text-dark: #311b92;
+            --text-light: #5e35b1;
+        }
+
+        body {
+            background: linear-gradient(180deg, #ffe4e1 0%, #e0c3fc 50%, #b3e5fc 100%);
+            background-attachment: fixed;
+            color: var(--text-dark);
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .clouds-bg {
+            position: fixed;
+            top: 0; left: 0; width: 200vw; height: 100vh;
+            background: transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><circle cx="40" cy="40" r="30" fill="%23ffffff" opacity="0.4"/><circle cx="80" cy="50" r="40" fill="%23ffffff" opacity="0.4"/><circle cx="120" cy="30" r="30" fill="%23ffffff" opacity="0.4"/></svg>') repeat;
+            background-size: 400px 400px;
+            animation: drift 40s linear infinite;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        @keyframes drift {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50vw); }
+        }
+
+        .terminal-container {
+            max-width: 850px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+            padding-bottom: 100px;
+        }
+
+        h1, h2, h3 { 
+            font-family: 'Share Tech Mono', monospace; 
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 0 10px #fff, 0 0 20px var(--neon-pink), 0 0 30px var(--neon-purple);
+            margin-bottom: 30px;
+        }
+
+        h1 { font-size: 2.8rem; letter-spacing: 2px; border-bottom: 4px dashed #fff; padding-bottom: 20px; margin-bottom: 80px;}
+        h2 { font-size: 2rem; text-align: left; margin-top: 120px; padding-left: 20px; border-left: 6px solid #fff; }
+        h3 { font-size: 1.3rem; color: var(--text-dark); text-shadow: 0 0 10px #fff; }
+
+        .task-box {
+            position: relative;
+            background: rgba(209, 196, 233, 0.65);
+            border: 6px solid #fff;
+            border-radius: 50px;
+            padding: 60px 40px 40px 40px; 
+            margin-top: 80px;
+            margin-bottom: 150px; 
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8), inset 0 0 25px rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            transition: transform 0.3s ease;
+        }
+
+        .task-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px var(--neon-pink), inset 0 0 25px #fff;
+        }
+
+        .dec-svg { 
+            position: absolute; 
+            pointer-events: none; 
+            filter: drop-shadow(0 0 8px rgba(255,255,255,0.9));
+        }
+
+        /* Идеальные координаты для ушек и мордочки */
+        .cat-face { 
+            top: -47px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 220px; 
+            height: 120px; 
+            z-index: 5;
+        }
+        
+        .cat-tail { 
+            top: 40%; 
+            right: -130px; 
+            width: 150px; 
+            height: 200px; 
+            z-index: -1; 
+        }
+
+        .cat-paw-left { top: 60%; left: -30px; width: 60px; height: 40px; z-index: 5; }
+        .cat-paw-right { top: 60%; right: -30px; width: 60px; height: 40px; z-index: 5; }
+        .cat-paws-bottom { bottom: -30px; left: 50%; transform: translateX(-50%); width: 180px; height: 40px; z-index: 5; }
+
+        p.instruction { color: var(--text-light); font-style: italic; margin-bottom: 25px; text-align: center; font-weight: 800; }
+        p { margin: 15px 0; font-weight: 600; }
+
+        input[type="text"], select {
+            background: rgba(255, 255, 255, 0.8);
+            border: 3px solid var(--neon-purple);
+            border-radius: 12px;
+            color: var(--text-dark);
+            font-family: 'Share Tech Mono', monospace;
+            padding: 5px 10px; font-size: 16px; font-weight: bold;
+            outline: none; transition: 0.3s; margin: 0 5px;
+        }
+        input[type="text"]:focus, select:focus {
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 15px var(--neon-pink);
+            background: #fff;
+        }
+
+        /* Стили для заблокированных (показанных) ответов */
+        input:disabled, select:disabled {
+            opacity: 1;
+            cursor: not-allowed;
+            background: rgba(0, 230, 118, 0.15);
+            color: #008b3a;
+            border-color: #00e676;
+            box-shadow: 0 0 10px #00e676 inset;
+        }
+
+        textarea {
+            width: 100%; height: 150px;
+            background: rgba(255, 255, 255, 0.8);
+            border: 3px solid var(--neon-purple);
+            border-radius: 20px;
+            color: var(--text-dark); 
+            font-family: 'Nunito', sans-serif;
+            padding: 20px; box-sizing: border-box; resize: vertical;
+            font-size: 16px; font-weight: bold;
+        }
+        textarea:focus { border-color: var(--neon-pink); outline: none; box-shadow: 0 0 15px var(--neon-pink); }
+
+        /* Группа кнопок */
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .cyber-btn {
+            background: #fff;
+            color: var(--text-dark);
+            border: 4px solid var(--neon-purple);
+            border-radius: 25px;
+            font-family: 'Share Tech Mono', monospace; 
+            font-size: 16px; font-weight: bold;
+            text-transform: uppercase; padding: 12px 25px;
+            cursor: pointer; transition: 0.3s;
+            box-shadow: 0 5px 0 var(--neon-purple);
+        }
+        .cyber-btn:hover { background: var(--neon-pink); color: #fff; border-color: #fff; box-shadow: 0 0 20px var(--neon-pink); transform: translateY(2px); }
+        .cyber-btn:active { transform: translateY(5px); box-shadow: none; }
+        
+        .btn-ans { border-color: var(--neon-cyan); box-shadow: 0 5px 0 var(--neon-cyan); }
+        .btn-ans:hover { background: var(--neon-cyan); box-shadow: 0 0 20px var(--neon-cyan); }
+
+        .btn-calc { font-size: 20px; padding: 20px; margin-top: 50px; width: 100%; background: var(--neon-purple); color: #fff; border-color: #fff; box-shadow: 0 8px 0 #7e57c2; }
+        .btn-calc:hover { background: #fff; color: var(--neon-purple); box-shadow: 0 0 30px #fff; }
+
+        .btn-download { background: var(--neon-yellow); color: var(--text-dark); box-shadow: 0 5px 0 #fbc02d; margin-top: 30px;}
+
+        .status-text { display: block; text-align: center; margin-top: 15px; font-weight: 800; font-family: 'Share Tech Mono', monospace; font-size: 14px; text-shadow: 0 0 5px #fff; }
+        .correct-input { border-color: #00e676 !important; color: #00c853 !important; box-shadow: 0 0 15px #00e676; }
+        .incorrect-input { border-color: #ff1744 !important; color: #ff1744 !important; text-decoration: line-through; box-shadow: 0 0 15px #ff1744; }
+
+        #final-screen {
+            display: none; text-align: center; padding: 50px 20px; margin-top: 40px;
+            border: 6px solid #fff; border-radius: 40px;
+            background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(15px);
+            box-shadow: 0 0 50px var(--neon-pink); 
+        }
+        .score-display { font-size: 4em; color: var(--text-dark); text-shadow: 0 0 20px #fff; margin: 20px 0; font-family: 'Share Tech Mono', monospace; }
+        
+        .reading-text { background: rgba(255, 255, 255, 0.7); padding: 25px; border-radius: 20px; border-left: 6px solid var(--neon-purple); font-size: 1em; margin-bottom: 25px; color: var(--text-dark); box-shadow: inset 0 0 15px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+
+<svg style="width:0; height:0; position:absolute;">
+  <defs>
+    <filter id="neon" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="eyeGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>
+
+<div class="clouds-bg"></div>
+
+<div class="terminal-container">
+    <h1>UNIT 0: LO-FI TEST</h1>
+
+    <h2>UNIT 0: VOCABULARY</h2>
+    
+    <div class="task-box" id="task1_1" data-topic="Раздел 0.1 - 0.4: Лексика (Multiple-Choice Cloze)">
+        <h3>Task 1.1: Multiple-Choice Cloze</h3>
+        <p class="instruction">Select the correct option (A, B, C, D).</p>
+        <p>1. Constant stress and lack of sleep can have a severely negative impact on your general <select id="q1_1_1" class="snd-hover"><option value="">--</option><option value="A">A) well-being</option><option value="B">B) footprint</option><option value="C">C) facility</option><option value="D">D) routine</option></select>.</p>
+        <p>2. I know you are feeling <select id="q1_1_2" class="snd-hover"><option value="">--</option><option value="A">A) enthusiastic</option><option value="B">B) challenging</option><option value="C">C) miserable</option><option value="D">D) spacious</option></select> right now, but failing one exam isn't the end of the world.</p>
+        <p>3. If you want to reduce your carbon <select id="q1_1_3" class="snd-hover"><option value="">--</option><option value="A">A) impact</option><option value="B">B) footprint</option><option value="C">C) sweat</option><option value="D">D) resource</option></select>, you should walk.</p>
+        <p>4. Modern digital devices have a tendency to <select id="q1_1_4" class="snd-hover"><option value="">--</option><option value="A">A) appeal</option><option value="B">B) depend</option><option value="C">C) wander</option><option value="D">D) chill</option></select> to teenagers more than reading.</p>
+        <p>5. After their massive argument, it took them three weeks to finally <select id="q1_1_5" class="snd-hover"><option value="">--</option><option value="A">A) fall out</option><option value="B">B) make up</option><option value="C">C) get together</option><option value="D">D) work up</option></select> and start talking again.</p>
+        <p>6. The new university campus has excellent sports <select id="q1_1_6" class="snd-hover"><option value="">--</option><option value="A">A) networks</option><option value="B">B) habitats</option><option value="C">C) facilities</option><option value="D">D) gadgets</option></select>.</p>
+        <p>7. I consider myself a bit of a <select id="q1_1_7" class="snd-hover"><option value="">--</option><option value="A">A) techie</option><option value="B">B) hunter-gatherer</option><option value="C">C) athlete</option><option value="D">D) nobility</option></select>; I love setting up new software.</p>
+        <p>8. A healthy diet is essential if you want to <select id="q1_1_8" class="snd-hover"><option value="">--</option><option value="A">A) maintain</option><option value="B">B) consume</option><option value="C">C) dump</option><option value="D">D) compete</option></select> your health as you get older.</p>
+        
+        <div class="btn-group">
+            <button class="cyber-btn" onclick="checkSection('task1_1')">Check Task 1.1</button>
+            <button id="btn_ans_task1_1" class="cyber-btn btn-ans" style="display:none;" onclick="showAnswers('task1_1')">Show Answers</button>
+        </div>
+        <span class="status-text" id="status_task1_1"></span>
+    </div>
+
+    <div class="task-box" id="task1_2" data-topic="Раздел 0.1 - 0.4: Лексика (Словообразование)">
+        <h3>Task 1.2: Word Formation</h3>
+        <p class="instruction">Decrypt the root word in brackets to form a valid word.</p>
+        <p>9. I'd prefer an apartment that is more <input type="text" id="q1_2_1" class="snd-type" placeholder="SPACE">.</p>
+        <p>10. We must transition to <input type="text" id="q1_2_2" class="snd-type" placeholder="RENEW"> energy sources.</p>
+        <p>11. Many young people are heavily <input type="text" id="q1_2_3" class="snd-type" placeholder="DEPEND"> on their smartphones.</p>
+        <p>12. The task was incredibly <input type="text" id="q1_2_4" class="snd-type" placeholder="CHALLENGE">.</p>
+        <p>13. The fans were very <input type="text" id="q1_2_5" class="snd-type" placeholder="ENTHUSIASM"> about the new game release.</p>
+        <p>14. Mining for rare metals leads to severe <input type="text" id="q1_2_6" class="snd-type" placeholder="FOREST">.</p>
+        
+        <div class="btn-group">
+            <button class="cyber-btn" onclick="checkSection('task1_2')">Check Task 1.2</button>
+            <button id="btn_ans_task1_2" class="cyber-btn btn-ans" style="display:none;" onclick="showAnswers('task1_2')">Show Answers</button>
+        </div>
+        <span class="status-text" id="status_task1_2"></span>
+    </div>
+
+    <h2>UNIT 0: GRAMMAR</h2>
+
+    <div class="task-box" id="task2_1" data-topic="Раздел 0.3: Грамматика (Модальные глаголы)">
+        <h3>Task 2.1: Key Word Transformation</h3>
+        <p class="instruction">Rewrite using the given word (2-5 words total).</p>
+        <p>1. I am slowly adapting to waking up early. <b>(GETTING)</b><br>I <input type="text" id="q2_1_1" class="snd-type" style="width:250px"> waking up early.</p>
+        <p>2. It wasn't normal for women to participate in ancient sports. <b>(USE)</b><br>Women <input type="text" id="q2_1_2" class="snd-type" style="width:250px"> in ancient sports.</p>
+        <p>3. The size of the battery determines how bad it is. <b>(BIGGER)</b><br>The <input type="text" id="q2_1_3" class="snd-type" style="width:250px">, the less environmentally friendly it is.</p>
+        <p>4. It is strictly forbidden to stream TV series during the exam. <b>(MUST)</b><br>You <input type="text" id="q2_1_4" class="snd-type" style="width:250px"> TV series during the exam.</p>
+        <p>5. I started coding at 10 AM, and I am still doing it. <b>(BEEN)</b><br>I <input type="text" id="q2_1_5" class="snd-type" style="width:250px"> this project since 10 AM.</p>
+        <p>6. There is no obligation for you to buy expensive gear. <b>(HAVE)</b><br>You <input type="text" id="q2_1_6" class="snd-type" style="width:250px"> buy expensive gear.</p>
+        
+        <div class="btn-group">
+            <button class="cyber-btn" onclick="checkSection('task2_1')">Check Task 2.1</button>
+            <button id="btn_ans_task2_1" class="cyber-btn btn-ans" style="display:none;" onclick="showAnswers('task2_1')">Show Answers</button>
+        </div>
+        <span class="status-text" id="status_task2_1"></span>
+    </div>
+
+    <div class="task-box" id="task2_2" data-topic="Раздел 0.4: Грамматика (Advanced comparatives)">
+        <h3>Task 2.2: Advanced Comparatives Gap Fill</h3>
+        <p class="instruction">Write ONE word in each gap.</p>
+        <p>7. <input type="text" id="q2_2_1" class="snd-type" style="width:80px"> more time you spend outdoors, <input type="text" id="q2_2_2" class="snd-type" style="width:80px"> healthier you will feel.</p>
+        <p>8. Electric cars are nowhere <input type="text" id="q2_2_3" class="snd-type" style="width:80px"> as polluting as traditional vehicles.</p>
+        <p>9. Wind power is not <input type="text" id="q2_2_4" class="snd-type" style="width:80px"> as reliable as nuclear power.</p>
+        <p>10. My new study space is <input type="text" id="q2_2_5" class="snd-type" style="width:80px"> bit smaller, but much quieter.</p>
+        <p>11. Space junk is <input type="text" id="q2_2_6" class="snd-type" style="width:80px"> greater today than a decade ago.</p>
+        
+        <div class="btn-group">
+            <button class="cyber-btn" onclick="checkSection('task2_2')">Check Task 2.2</button>
+            <button id="btn_ans_task2_2" class="cyber-btn btn-ans" style="display:none;" onclick="showAnswers('task2_2')">Show Answers</button>
+        </div>
+        <span class="status-text" id="status_task2_2"></span>
+    </div>
+
+    <div class="task-box" id="task2_3" data-topic="Раздел 0.1 - 0.2: Грамматика (Perfect tenses & Past habits)">
+        <h3>Task 2.3: Perfect Tenses & Past Habits</h3>
+        <p class="instruction">Input the correct tense or habit structure (used to/would).</p>
+        <p>When I was in primary school, I 12.<input type="text" id="q2_3_1" class="snd-type"> (hate) physical activity. I 13.<input type="text" id="q2_3_2" class="snd-type"> (sit) in my room for hours. By the time I turned 15, I 14.<input type="text" id="q2_3_3" class="snd-type"> (realise) the importance of health. Recently, I 15.<input type="text" id="q2_3_4" class="snd-type"> (spend) a lot of time developing web apps. To balance this, for the last three months, I 16.<input type="text" id="q2_3_5" class="snd-type"> (go) to the gym regularly. I 17.<input type="text" id="q2_3_6" class="snd-type"> (already / notice) a huge impact. I can say I 18.<input type="text" id="q2_3_7" class="snd-type"> (get) used to this lifestyle!</p>
+        
+        <div class="btn-group">
+            <button class="cyber-btn" onclick="checkSection('task2_3')">Check Task 2.3</button>
+            <button id="btn_ans_task2_3" class="cyber-btn btn-ans" style="display:none;" onclick="showAnswers('task2_3')">Show Answers</button>
+        </div>
+        <span class="status-text" id="status_task2_3"></span>
+    </div>
+
+    <h2>UNIT 0: READING</h2>
+    
+    <div class="task-box" id="task3" data-topic="Раздел 0.1 - 0.4: Чтение (Reading Comprehension)">
+        <div class="reading-text">
+            <b>FILE: The Digital Balancing Act</b><br><br>
+            For a long time, my bedroom was my entire world. As someone deeply passionate about creating interactive educational content, I used to spend up to twelve hours a day glued to my monitor. My desk was a chaotic mountain of notes and cables. I was completely dependent on my gadgets.<br><br>
+            However, this lifestyle soon took its toll. I started feeling miserable. An acquaintance who had recently taken up running offered a helping hand and suggested I join her for short evening jogs. At first, it was a nightmare. I wasn't used to working up a sweat. But gradually, the fresh air cleared my mind.<br><br>
+            I also realised I needed to change my study space. I read an article stating that the more cluttered your workspace is, the less productive you become. I completely reorganised my room. I now make sure to power down my servers overnight, proving that you can be a techie while still caring about the environment.
+        </div>
+        
+        <h3>Task 3.1: Boolean Logic (T/F/NG)</h3>
+        <p>1. The author used to have a very neat workspace. <select id="q3_1_1" class="snd-hover"><option value="">--</option><option value="T">True</option><option value="F">False</option><option value="NG">Not Given</option></select></p>
+        <p>2. The friend forced them to buy expensive running shoes. <select id="q3_1_2" class="snd-hover"><option value="">--</option><option value="T">True</option><option value="F">False</option><option value="NG">Not Given</option></select></p>
+        <p>3. The author found running very easy from the first day. <select id="q3_1_3" class="snd-hover"><option value="">--</option><option value="T">True</option><option value="F">False</option><option value="NG">Not Given</option></select></p>
+        <p>4. The author believes a messy desk affects productivity. <select id="q3_1_4" class="snd-hover"><option value="">--</option><option value="T">True</option><option value="F">False</option><option value="NG">Not Given</option></select></p>
+        <p>5. The author leaves their computer running 24/7. <select id="q3_1_5" class="snd-hover"><option value="">--</option><option value="T">True</option><option value="F">False</option><option value="NG">Not Given</option></select></p>
+        
+        <h3>Task 3.2: Vocabulary Extraction</h3>
+        <p>Find expressions in the text that mean the same as:</p>
+        <p>6. Had a bad effect on someone over time: <input type="text" id="q3_2_1" class="snd-type" style="width:200px"></p>
+        <p>7. Provided assistance or support: <input type="text" id="q3_2_2" class="snd-type" style="width:200px"></p>
+        <p>8. Doing physical exercise that makes you perspire: <input type="text" id="q3_2_3" class="snd-type" style="width:200px"></p>
+        
+        <div class="btn-group">
+            <button class="cyber-btn" onclick="checkSection('task3')">Check Task 3</button>
+            <button id="btn_ans_task3" class="cyber-btn btn-ans" style="display:none;" onclick="showAnswers('task3')">Show Answers</button>
+        </div>
+        <span class="status-text" id="status_task3"></span>
+    </div>
+
+    <h2>UNIT 0: WRITING</h2>
+    <div class="task-box">
+        <p class="instruction">Write a short log entry (blog post) describing how your study space and habits have changed recently. Use comparatives, perfect tenses, and modals.</p>
+        <textarea id="essay-box" class="snd-type" placeholder="> INITIATE LOG ENTRY..."></textarea>
+    </div>
+
+    <button class="cyber-btn btn-calc" onclick="calculateFinal()">COMPILE FINAL SCORE</button>
+
+    <div id="final-screen">
+        <h1>TEST COMPLETED</h1>
+        <div class="score-display">SCORE: <span id="score-val">0</span>/<span id="max-val">0</span></div>
+        <button class="cyber-btn btn-download" onclick="downloadReport()">DOWNLOAD REPORT FOR TEACHER</button>
+    </div>
+
+</div>
+
+<script>
+    // --- ТОЧНОЕ ПОЗИЦИОНИРОВАНИЕ SVG-КОТИКОВ НА РАМКЕ ---
+    const catDecorations = `
+        <svg class="cat-face dec-svg" viewBox="0 0 220 120">
+          <g filter="url(#neon)">
+            <path d="M 30 50 L 50 10 L 70 50" fill="none" stroke="#ffffff" stroke-width="6" stroke-linejoin="round"/>
+            <path d="M 40 40 L 50 20 L 60 40" fill="none" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
+            <path d="M 150 50 L 170 10 L 190 50" fill="none" stroke="#ffffff" stroke-width="6" stroke-linejoin="round"/>
+            <path d="M 160 40 L 170 20 L 180 40" fill="none" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"/>
+          </g>
+          
+          <g filter="url(#eyeGlow)">
+            <ellipse cx="70" cy="80" rx="16" ry="12" fill="#ffd700">
+              <animate attributeName="opacity" values="1; 1; 0; 1; 1" keyTimes="0; 0.95; 0.96; 0.98; 1" dur="4s" repeatCount="indefinite" />
+            </ellipse>
+            <ellipse cx="150" cy="80" rx="16" ry="12" fill="#ffd700">
+              <animate attributeName="opacity" values="1; 1; 0; 1; 1" keyTimes="0; 0.95; 0.96; 0.98; 1" dur="4s" repeatCount="indefinite" />
+            </ellipse>
+          </g>
+
+          <g filter="url(#neon)">
+            <path d="M 100 95 Q 110 105 110 95 Q 110 105 120 95" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+          </g>
+        </svg>
+
+        <svg class="cat-tail dec-svg" viewBox="-20 -20 200 250" style="overflow: visible;">
+          <g filter="url(#neon)">
+            <g transform-origin="0 150">
+              <path d="M 0 150 C 80 150, 120 80, 100 30 S 40 0, 40 30" fill="none" stroke="#d1c4e9" stroke-width="20" stroke-linecap="round"/>
+              <path d="M 0 150 C 80 150, 120 80, 100 30 S 40 0, 40 30" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+              <animateTransform attributeName="transform" type="rotate" values="0; 15; 0; -5; 0" dur="4s" repeatCount="indefinite" />
+            </g>
+          </g>
+        </svg>
+
+        <svg class="cat-paw-left dec-svg" viewBox="0 0 60 40">
+          <g filter="url(#neon)">
+             <rect x="5" y="5" width="50" height="30" rx="15" fill="#d1c4e9" stroke="#ffffff" stroke-width="6" />
+          </g>
+        </svg>
+
+        <svg class="cat-paw-right dec-svg" viewBox="0 0 60 40">
+          <g filter="url(#neon)">
+             <rect x="5" y="5" width="50" height="30" rx="15" fill="#d1c4e9" stroke="#ffffff" stroke-width="6" />
+          </g>
+        </svg>
+
+        <svg class="cat-paws-bottom dec-svg" viewBox="0 0 180 40">
+          <g filter="url(#neon)">
+             <rect x="20" y="0" width="40" height="30" rx="15" fill="#d1c4e9" stroke="#ffffff" stroke-width="6" />
+             <rect x="120" y="0" width="40" height="30" rx="15" fill="#d1c4e9" stroke="#ffffff" stroke-width="6" />
+          </g>
+        </svg>
+    `;
+    
+    document.querySelectorAll('.task-box').forEach(box => {
+        // Пропускаем блок с Writing, так как там нет кнопки проверки и ответов
+        if(box.querySelector('.btn-group')) {
+            box.insertAdjacentHTML('afterbegin', catDecorations);
+        } else {
+             box.insertAdjacentHTML('afterbegin', catDecorations);
+        }
+    });
+
+    // --- ЗВУКОВАЯ СИСТЕМА ---
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+
+    function playTone(freq, type, duration, vol) {
+        if(audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function playHover() { playTone(400, 'sine', 0.1, 0.05); } 
+    function playType() { playTone(800, 'sine', 0.05, 0.02); }
+    function playClick() { playTone(300, 'sine', 0.1, 0.1); setTimeout(() => playTone(400, 'sine', 0.1, 0.1), 50); }
+    function playError() { playTone(200, 'sine', 0.3, 0.1); } 
+    function playSuccess() { 
+        playTone(500, 'sine', 0.1, 0.1); 
+        setTimeout(() => playTone(700, 'sine', 0.1, 0.1), 100); 
+        setTimeout(() => playTone(900, 'sine', 0.2, 0.1), 200); 
+    }
+
+    document.querySelectorAll('.snd-hover').forEach(el => el.addEventListener('change', playHover));
+    document.querySelectorAll('.snd-type').forEach(el => el.addEventListener('input', playType));
+    document.querySelectorAll('.cyber-btn').forEach(el => el.addEventListener('click', playClick));
+
+    // --- ЛОГИКА ПРОВЕРКИ И ПОКАЗА ОТВЕТОВ ---
+    const correctData = {
+        'q1_1_1': ['A'], 'q1_1_2': ['C'], 'q1_1_3': ['B'], 'q1_1_4': ['A'], 'q1_1_5': ['B'], 'q1_1_6': ['C'], 'q1_1_7': ['A'], 'q1_1_8': ['A'],
+        'q1_2_1': ['spacious'], 'q1_2_2': ['renewable'], 'q1_2_3': ['dependent'], 'q1_2_4': ['challenging'], 'q1_2_5': ['enthusiastic'], 'q1_2_6': ['deforestation'],
+        'q2_1_1': ['am getting used to', 'm getting used to', 'am becoming used to'],
+        'q2_1_2': ['didn\'t use to compete', 'did not use to compete', 'didn\'t use to participate'],
+        'q2_1_3': ['bigger the battery', 'bigger the battery is'],
+        'q2_1_4': ['mustn\'t stream', 'must not stream'],
+        'q2_1_5': ['have been doing', 'have been working on', 'have been coding'],
+        'q2_1_6': ['don\'t have to', 'do not have to', 'needn\'t', 'need not'],
+        'q2_2_1': ['the'], 'q2_2_2': ['the'], 'q2_2_3': ['near'], 'q2_2_4': ['as', 'quite'], 'q2_2_5': ['a'], 'q2_2_6': ['far', 'much'],
+        'q2_3_1': ['hated', 'used to hate', 'would hate'], 'q2_3_2': ['would sit', 'used to sit', 'sat'], 'q2_3_3': ['had realised', 'had realized'],
+        'q2_3_4': ['have been spending', 'have spent'], 'q2_3_5': ['have been going', 'have gone'], 'q2_3_6': ['have already noticed', '\'ve already noticed'], 'q2_3_7': ['have got', 'am getting', '\'ve got', '\'m getting'],
+        'q3_1_1': ['F'], 'q3_1_2': ['NG'], 'q3_1_3': ['F'], 'q3_1_4': ['T'], 'q3_1_5': ['F'],
+        'q3_2_1': ['took its toll'], 'q3_2_2': ['offered a helping hand'], 'q3_2_3': ['working up a sweat']
+    };
+
+    let totalPoints = Object.keys(correctData).length;
+    let failedTopics = new Set();
+    let userScores = {}; // Храним баллы на момент первой проверки
+
+    function checkSection(sectionId) {
+        let section = document.getElementById(sectionId);
+        let inputs = section.querySelectorAll('input:not(:disabled), select:not(:disabled)');
+        let sectionScore = 0;
+        let sectionTotal = section.querySelectorAll('input, select').length; // Считаем все инпуты
+
+        // Если ответы уже показаны и поля заблокированы, не пересчитываем
+        if(inputs.length === 0) return;
+
+        inputs.forEach(input => {
+            let id = input.id;
+            if(!correctData[id]) return; 
+
+            let userVal = input.value.trim().toLowerCase().replace(/[.,!]/g, '');
+            let isCorrect = correctData[id].some(ans => ans.toLowerCase() === userVal);
+
+            input.classList.remove('correct-input', 'incorrect-input');
+            
+            if (isCorrect) {
+                input.classList.add('correct-input');
+                sectionScore++;
+            } else {
+                if(userVal !== "" && userVal !== "--") {
+                    input.classList.add('incorrect-input');
+                }
+            }
+        });
+
+        // Сохраняем реальный результат пользователя до того как он посмотрит ответы
+        userScores[sectionId] = sectionScore;
+
+        let statusSpan = document.getElementById('status_' + sectionId);
+        statusSpan.innerText = `[${sectionScore}/${sectionTotal} УСПЕШНО]`;
+        
+        if (sectionScore === sectionTotal) {
+            statusSpan.style.color = '#00e676';
+            playSuccess();
+        } else {
+            statusSpan.style.color = '#ff1744';
+            playError();
+        }
+
+        // Показываем кнопку "Показать ответы"
+        let btnAns = document.getElementById('btn_ans_' + sectionId);
+        if(btnAns) btnAns.style.display = 'inline-block';
+    }
+
+    function showAnswers(sectionId) {
+        let section = document.getElementById(sectionId);
+        let inputs = section.querySelectorAll('input, select');
+        
+        inputs.forEach(input => {
+            let id = input.id;
+            if(!correctData[id]) return;
+            
+            // Вставляем правильный ответ
+            input.value = correctData[id][0];
+            
+            // Блокируем поле
+            input.disabled = true;
+            
+            // Убираем красную рамку, оставляем чистый вид
+            input.classList.remove('incorrect-input');
+        });
+        
+        // Прячем кнопку
+        let btn = document.getElementById('btn_ans_' + sectionId);
+        if(btn) btn.style.display = 'none';
+
+        playTone(600, 'sine', 0.1, 0.1);
+        setTimeout(() => playTone(800, 'sine', 0.2, 0.1), 100);
+    }
+
+    function calculateFinal() {
+        let globalScore = 0;
+        failedTopics.clear();
+
+        document.querySelectorAll('.task-box').forEach(box => {
+            let topicName = box.getAttribute('data-topic');
+            let sectionId = box.id;
+            let hasError = false;
+
+            if(!topicName || !sectionId) return; 
+
+            // Проверяем ошибки на основе текущих или сохраненных значений
+            box.querySelectorAll('input, select').forEach(input => {
+                let id = input.id;
+                if(!correctData[id]) return;
+                
+                // Если инпут заблокирован (показаны ответы), считаем что была ошибка (пользователь сдался)
+                // Если нет, проверяем его реальное значение
+                if (input.disabled) {
+                   hasError = true; 
+                } else {
+                    let userVal = input.value.trim().toLowerCase().replace(/[.,!]/g, '');
+                    let isCorrect = correctData[id].some(ans => ans.toLowerCase() === userVal);
+                    if (!isCorrect) hasError = true;
+                }
+            });
+
+            // Добавляем баллы из userScores (чтобы не засчитать показанные ответы как верные)
+            if(userScores[sectionId] !== undefined) {
+                globalScore += userScores[sectionId];
+            } else {
+                // Если пользователь не нажимал "Check", но нажал "Compile Final"
+                box.querySelectorAll('input, select').forEach(input => {
+                    let id = input.id;
+                    if(!correctData[id]) return;
+                    let userVal = input.value.trim().toLowerCase().replace(/[.,!]/g, '');
+                    if (correctData[id].some(ans => ans.toLowerCase() === userVal)) {
+                        globalScore++;
+                    }
+                });
+            }
+
+            if(hasError) failedTopics.add(topicName);
+        });
+
+        document.getElementById('score-val').innerText = globalScore;
+        document.getElementById('max-val').innerText = totalPoints;
+        
+        let finalScreen = document.getElementById('final-screen');
+        finalScreen.style.display = 'block';
+        playSuccess();
+        
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    function downloadReport() {
+        const essay = document.getElementById('essay-box').value || "[Ничего не написано]";
+        const score = document.getElementById('score-val').innerText;
+        
+        let report = `=======================================\n`;
+        report += `    ОТЧЕТ О ТЕСТИРОВАНИИ (LO-FI EDITION)\n`;
+        report += `=======================================\n\n`;
+        report += `Итоговый балл: ${score} / ${totalPoints}\n\n`;
+        
+        report += `[ ТЕМЫ ДЛЯ ПОВТОРЕНИЯ ]\n`;
+        if (failedTopics.size > 0) {
+            failedTopics.forEach(topic => report += `- ${topic}\n`);
+        } else {
+            report += `- Ошибок нет. Идеальный результат!\n`;
+        }
+
+        report += `\n=======================================\n`;
+        report += `[ ОТВЕТ НА ПИСЬМЕННОЕ ЗАДАНИЕ ]\n`;
+        report += `=======================================\n\n`;
+        report += `${essay}\n\n`;
+        report += `> КОНЕЦ ОТЧЕТА.`;
+
+        const blob = new Blob([report], {type: "text/plain;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "Unit0_Test_Report.txt";
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+</script>
+</body>
+</html>
